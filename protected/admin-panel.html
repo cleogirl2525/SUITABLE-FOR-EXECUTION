@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>ADMIN PANEL</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/admin.css">
+  </head>
+  <body>
+
+    <section id="admin-panel">
+      <div id="top-row">
+        <span>[ ADMIN PANEL ]</span>
+        <button id="logout">logout</button>
+      </div>
+
+      <div class="col-2">
+        <div>
+          <div class="title-bar">
+            CHAT WINDOW --- chatting as [SYS_OP] --- (<a href="/chat" target="_blank">open in new tab</a>)
+          </div>
+          <iframe src="/chat" border="none"></iframe>
+        </div>
+        <div>
+          <div class="title-bar">
+            PASSWORD USAGE STATS
+          </div>
+          <iframe src="/chat" border="none"></iframe>
+        </div>
+      </div>
+
+      <div class="title-bar">
+        SITE ANALYTICS (<a href="/analytics" target="_blank">open in new tab</a>)
+      </div>
+
+      <iframe src="/analytics" border="none"></iframe>
+
+    </section>
+
+    <script src="/js/main.js"></script>
+    <script>
+      window.adminLogout('#logout')
+    </script>
+  </body>
+</html>

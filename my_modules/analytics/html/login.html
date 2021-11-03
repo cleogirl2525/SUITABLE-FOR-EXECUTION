@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Analytics Login</title>
+    <style>
+
+      body {
+        margin: 0;
+        background-color: black;
+        color: white;
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-weight: 300;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      input {
+        border: 1px solid #fff;
+        background-color: #000;
+        color: #fff;
+        padding: 5px;
+      }
+
+      button {
+        border: 1px solid #fff;
+        background-color: #fff;
+        color: #000;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+
+      .wrap {
+        max-width: 700px;
+        margin: 20px auto;
+      }
+
+      .center-flex {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .error-message {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+
+    <section class="wrap center-flex">
+      <p>
+        analytics login
+        <br>
+        <input id="pw" type="password" placeholder="password">
+        <button id="login">login</button>
+        <br>
+        <span class="error-message"></span>
+      </p>
+    </section>
+
+    <script>
+      document.querySelector('#login').addEventListener('click', () => {
+        const opts = {
+          method: 'post',
+          headers: {
+            Accept: 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            password: document.querySelector('#pw').value
+          })
+        }
+        window.fetch('/api/login', opts)
+          .then(res => res.json())
+          .then(data => (r) => {
+            if (r.error) {
+              document.querySelector('.error-message').textContent = r.error
+            } else if (r.message === 'access granted') {
+              window.location = window.location.origin + '/analytics'
+            }
+          })
+          .catch(err => console.error(err))
+      })
+    </script>
+
+  </body>
+</html>

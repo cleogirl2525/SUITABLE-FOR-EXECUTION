@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>chat</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/chat.css">
+  </head>
+  <body>
+
+    <section id="chat-frame">
+      <marquee direction="left" scrollamount="5" width="100%">
+        welcome to the chat ---- pls remember to:??? ---- also: ???? ----
+      </marquee>
+      <div id="chat-window">
+        <!-- div.chat-message get injected here-->
+      </div>
+      <div id="chat-box">
+        <button>send</button>
+        <input type="text" placeholder="message">
+      </div>
+    </section>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/chat.js"></script>
+  </body>
+</html>

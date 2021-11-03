@@ -1,0 +1,58 @@
+@font-face {
+  font-family: 'Inconsolata';
+  font-style: normal;
+  font-weight: 400;
+  src: url('fonts/inconsolata-v21-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local(''),
+    url('fonts/inconsolata-v21-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('fonts/inconsolata-v21-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+    url('fonts/inconsolata-v21-latin-regular.woff') format('woff'), /* Modern Browsers */
+    url('fonts/inconsolata-v21-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('fonts/inconsolata-v21-latin-regular.svg#Inconsolata') format('svg'); /* Legacy iOS */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: black;
+  color: white;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 300;
+}
+
+h1 {
+  text-align: center;
+}
+
+input {
+  border: 1px solid #fff;
+  background-color: #000;
+  color: #fff;
+  padding: 5px;
+}
+
+button {
+  border: 1px solid #fff;
+  background-color: #fff;
+  color: #000;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.wrap {
+  max-width: 700px;
+  margin: 20px auto;
+}
+
+.center-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.error-message {
+  color: red;
+}

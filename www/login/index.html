@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+
+    <section class="wrap center-flex">
+      <p>
+        enter admin password
+        <br>
+        <input id="pw" type="password" placeholder="password">
+        <button id="login">login</button>
+        <br>
+        <span class="error-message"></span>
+      </p>
+    </section>
+
+    <script src="/js/main.js"></script>
+    <script>
+      window.postLogin('#login', '#pw', (res) => {
+        if (res.error) { $('.error-message').textContent = res.error }
+        else if (res.message === 'access granted') {
+          window.location = window.location.origin + '/admin'
+        }
+      })
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,5 @@
+.env
+node_modules
+data/chats/*.json
+data/analytics/*.json
+package-lock.json

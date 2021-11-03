@@ -1,0 +1,38 @@
+#chat-frame {
+  font-family: 'Inconsolata', mono;
+}
+#chat-frame marquee {
+  background-color: blue;
+}
+
+#chat-window {
+  height: calc(100vh - 66px);
+  overflow-y: scroll;
+}
+
+.chat-message {
+  display: grid;
+  grid-template-columns: 230px auto;
+  margin: 5px 0;
+}
+
+.chat-message > span:nth-child(1) {
+  text-align: right;
+  margin-right: 10px;
+}
+
+#chat-box {
+  background-color: blue;
+  padding: 5px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+#chat-box button {
+  width: 66px;
+}
+
+#chat-box input {
+  width: calc(100% - 75px);
+}

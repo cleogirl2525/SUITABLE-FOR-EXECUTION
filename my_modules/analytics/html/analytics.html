@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>analytics</title>
+    <style>
+      * { box-sizing: border-box; }
+
+      body {
+        background: #000;
+        color: #fff;
+        font-family: monospace;
+      }
+
+      a {
+        color: #E6DB6F;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        background: #000;
+        padding: 10px;
+        border-bottom: 1px solid #fff;
+        width: 100vw;
+      }
+
+      header > div {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      header select {
+        max-width: 100px;
+      }
+
+      header #page {
+        color: #E6DB6F
+      }
+
+      #loading {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        background-color: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg) }
+        100% { transform: rotate(360deg) }
+      }
+
+      .spinner {
+        width: 100px;
+        height: 100px;
+        border: 16px dotted #fff;
+        border-radius: 50%;
+        animation: spin 2s linear infinite;
+      }
+
+      #analytics {
+        margin-top: 100px;
+      }
+
+      .analytics-row {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 2.2fr;
+      }
+
+      .analytics-row > * {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      .analytics-row b {
+        cursor: pointer;
+        padding: 0 5px;
+      }
+
+      .more-info {
+        padding: 10px 20px;
+        margin-bottom: 10px;
+        border: 1px solid #fff;
+        display: none;
+      }
+
+      .more-info div {
+        margin-bottom: 4px;
+      }
+
+      .more-info b, b {
+        color: #FC7575;
+        cursor: pointer;
+      }
+
+      .more-info b:hover {
+        text-decoration: underline;
+      }
+
+    </style>
+  </head>
+  <body>
+
+    <section id="loading">
+      <div class="spinner"></div>
+    </section>
+
+    <header>
+      <div>
+        <span>
+          from <input type="date" id="time-range-from">
+          to <input type="date" id="time-range-to">
+        </span>
+        <span>
+          hits for <span id="page">
+            <span>all pages</span>
+            <span></span>
+          </span>:
+          <span id="hits"></span>
+        </span>
+        <span>
+          display in local time: <input type="checkbox" id="local-time">
+        </span>
+        <span>
+          filter (potential) bots:
+          <select id="bot-filter">
+            <option value="hit-ip">hit-ip (agressive)</option>
+            <option value="took-bait">took-bait (medium)</option>
+            <option value="crawler">crawler (light)</option>
+            <option value="off">off (no filter)</option>
+          </select>
+        </span>
+      </div>
+      <br>
+      <div id="select-filters">
+        <span>filters: </span>
+        <input type="text" id="ips" placeholder="filter IP(s)" style="width: 100px">
+        <select id="device"></select>
+        <select id="client"></select>
+        <select id="OppSys"></select>
+        <select id="lang"></select>
+        <select id="city"></select>
+        <select id="region"></select>
+        <select id="country"></select>
+        <select id="AtonSys"></select>
+        <select id="ISP"></select>
+        <select id="ORG"></select>
+      </div>
+    </header>
+
+    <section id="analytics"></section>
+
+    <script>
+      let ANALYTICS = null
+      let OPTS = null
+      const filts = {
+        device: [],
+        client: [],
+        OppSys: [],
+        lang: [],
+        city: [],
+        region: [],
+        country: [],
+        AtonSys: [],
+        ISP: [],
+        ORG: []
+      }
+
+      window.$ = (sel) => {
+        const ez = [...document.querySelectorAll(sel)]
+          .map(e => { e.on = e.addEventListener; return e })
+        if (ez.length === 1) return ez[0]
+        else return ez
+      }
+
+      const dateStr = (date) => {
+        const yer = date.getFullYear()
+        let mon = date.getMonth() + 1
+        let day = date.getDate()
+        mon = String(mon).length === 1 ? '0' + mon : mon
+        day = String(day).length === 1 ? '0' + day : day
+        return `${yer}-${mon}-${day}`
+      }
+
+      function init () {
+        const oneMonth = 1000 * 60 * 60 * 24 * 31
+        const t = new Date()
+        const y = new Date(t - oneMonth)
+
+        $('#time-range-from').value = dateStr(y)
+        $('#time-range-to').value = dateStr(t)
+        $('#ips').value = ''
+
+        for (const id in filts) $(`#${id}`).on('change', fetchData)
+
+        $('#time-range-from').on('change', fetchData)
+        $('#ips').on('change', fetchData)
+        $('#bot-filter').on('change', fetchData)
+        $('#local-time').on('change', () => {
+          $('#loading').style.display = 'flex'
+          setTimeout(render, 100)
+        })
+
+        fetchData()
+      }
+
+      function fetchData () {
+        $('#loading').style.display = 'flex'
+
+        const t = $('#time-range-to').value
+        const y = $('#time-range-from').value
+        let query = `/api/analytics?start=${y}&end=${t}`
+        if ($('#ips').value !== '') {
+          query += `&ips=${$('#ips').value}`
+        }
+
+        for (const id in filts) {
+          if ($(`#${id}`).value !== 'all') {
+            query += `&${id}=${$(`#${id}`).value}`
+          }
+        }
+
+        if ($('#page').textContent.trim() !== 'all pages') {
+          const h = $('#page').children[0].textContent
+          const hh = $('#page').children[1].textContent || '/'
+          query += `&host=${h}&path=${hh}`
+        }
+
+        query += `&bot-filter=${$('#bot-filter').value}`
+
+        window.fetch(query)
+          .then(res => res.json())
+          .then(json => render(json))
+          .catch(err => console.log(err))
+      }
+
+      function render (res) {
+        ANALYTICS = res ? res.data : ANALYTICS
+        OPTS = res ? res.opts : OPTS
+
+        const hits = { t: 0, u: [] }
+        ANALYTICS.forEach(hit => {
+          hits.t++; if (!hits.u.includes(hit.ip)) hits.u.push(hit.ip)
+        })
+        $('#hits').textContent = `${hits.t} (${hits.u.length} unique visitors)`
+
+        const inputChange = (id, val) => {
+          const eve = new Event('change', { bubbles: true, cancelable: true, })
+          const ele = document.querySelector(id)
+          ele.value = val
+          ele.dispatchEvent(eve)
+        }
+
+        const displayPosted = (p) => {
+          let s = '{ '
+          for (const key in p) { s += `${key}: ${p[key]}, ` }
+          return s.substring(0, s.length - 2) + ' }'
+        }
+
+        const gm = (a, b) => `http://maps.google.de/maps?q=loc:${a},${b}`
+        const af = (f, v) => { if (!filts[f].includes(v)) { filts[f].push(v) } }
+
+        // add date strings && create filts
+        const a = ANALYTICS.map(o => {
+          // create select filter dictionary
+          af('device', o.device.type)
+          af('client', o.agent.family)
+          af('OppSys', o.agent.os.family)
+          af('lang', o.language)
+          af('city', o.geo.city)
+          af('region', o.geo.regionName)
+          af('country', o.geo.country)
+          af('AtonSys', o.geo.as)
+          af('ISP', o.geo.isp)
+          af('ORG', o.geo.org)
+          // add displayTime
+          const d = new Date(o.timestamp)
+          const l = $('#local-time').checked
+          o.displayTime = l ? d.toLocaleString() : d.toUTCString()
+          return o
+        })
+
+        // update select filters GUI
+        $('#select-filters > select').forEach(ele => {
+          ele.innerHTML = `<option value="all">[${ele.id}]</option>`
+          filts[ele.id].forEach(v => {
+            ele.innerHTML += `<option value="${v}">${v}</option>`
+          })
+          if (OPTS[ele.id]) ele.value = OPTS[ele.id]
+        })
+
+        $('#analytics').innerHTML = ''
+        a.forEach(e => {
+          const div = document.createElement('div')
+          div.dataset.open = 'false'
+          div.className = 'analytics-row'
+          div.innerHTML = `
+            <span><b>▶</b>${e.displayTime}</span>
+            <span>${e.ip.split('ffff:')[1]}</span>
+            <span>${e.device.type}</span>
+            <span>${e.agent.os.family} (${e.agent.os.major}.${e.agent.os.minor})</span>
+            <span>${e.agent.family} (${e.agent.major}.${e.agent.minor})</span>
+            <span>${e.geo.city}, ${e.geo.country} (<a href="${gm(e.geo.lat, e.geo.lon)}" target="_blank">GPS</a>)</span>
+          `
+          $('#analytics').appendChild(div)
+
+          const moreInfo = document.createElement('div')
+          moreInfo.className = 'more-info'
+          moreInfo.innerHTML = `
+            <div>
+              visited: <b class="h">${e.url.host}</b> <b class="hh">${e.url.path}</b>
+              ${e.posted ? displayPosted(e.posted) : ''}
+            </div>
+            <div>
+              ${e.geo.mobile ? 'request came from a cell connection' : 'request came from a standard connection'}
+              ${e.geo.proxy ? 'on a proxy (VPN/TOR/etc) ' : ''}
+              ${e.geo.hosting ? 'at a colocation/data center ' : ''}
+            </div>
+            <br>
+            <div>hardware: <b class="d">${e.device.type}</b> (model: ${e.device.model}) </div>
+            <div>software: <b class="c">${e.agent.family}</b> (${e.agent.major}.${e.agent.minor}) running on <b class="s">${e.agent.os.family}</b> (${e.agent.os.major}.${e.agent.os.minor}.${e.agent.os.patch})</div>
+            <div>language: <b class="l">${e.language}</b></div>
+            <div>timezone: ${e.geo.timezone}</div>
+            <br>
+            <div>IP query: <b class="i">${e.geo.query}</b> | raw: ${e.ip}</div>
+            <div>location: <b class="t">${e.geo.city}</b>, <b class="r">${e.geo.regionName}</b>, <b class="u">${e.geo.country}</b>, ${e.geo.zip}</div>
+            <div>AS: <b class="a">${e.geo.as}</b> | ISP: <b class="p">${e.geo.isp}</b> | ORG: <b class="o">${e.geo.org}</b></div>
+          `
+          $('#analytics').appendChild(moreInfo)
+
+          moreInfo.querySelectorAll('b').forEach(ele => {
+            ele.addEventListener('click', (e) => {
+              if (ele.className === 'i') inputChange('#ips', ele.textContent)
+              else if (ele.className === 'd') inputChange('#device', ele.textContent)
+              else if (ele.className === 'c') inputChange('#client', ele.textContent)
+              else if (ele.className === 's') inputChange('#OppSys', ele.textContent)
+              else if (ele.className === 'l') inputChange('#lang', ele.textContent)
+              else if (ele.className === 't') inputChange('#city', ele.textContent)
+              else if (ele.className === 'r') inputChange('#region', ele.textContent)
+              else if (ele.className === 'u') inputChange('#country', ele.textContent)
+              else if (ele.className === 'a') inputChange('#AtonSys', ele.textContent)
+              else if (ele.className === 'p') inputChange('#ISP', ele.textContent)
+              else if (ele.className === 'o') inputChange('#ORG', ele.textContent)
+              else if (ele.className === 'h') {
+                $('#page').children[0].textContent = ele.textContent
+                fetchData()
+              } else if (ele.className === 'hh') {
+                const h = ele.parentNode.querySelector('.h').textContent
+                const p = $('#page').children[0].textContent
+                if (p === 'all pages') $('#page').children[0].textContent = h
+                $('#page').children[1].textContent = ele.textContent
+                fetchData()
+              }
+            })
+          })
+
+          div.querySelector('b').addEventListener('click', (e) => {
+            if (div.dataset.open === 'true') {
+              moreInfo.style.display = 'none'
+              div.dataset.open = 'false'
+              e.target.textContent = '▶'
+            } else {
+              moreInfo.style.display = 'block'
+              e.target.textContent = '▼'
+              div.dataset.open = 'true'
+            }
+          })
+        })
+        $('#loading').style.display = 'none'
+      }
+
+      init()
+    </script>
+
+  </body>
+</html>
