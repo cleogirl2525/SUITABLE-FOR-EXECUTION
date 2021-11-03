@@ -317,7 +317,9 @@
           const l = $('#local-time').checked
           o.displayTime = l ? d.toLocaleString() : d.toUTCString()
           return o
-        })
+        }).reverse()
+
+        console.log(a);
 
         // update select filters GUI
         $('#select-filters > select').forEach(ele => {
