@@ -23,7 +23,7 @@
         </div>
         <div>
           <div class="title-bar">
-            PASSWORD PANEL (<a href="/pw">full screen</a>)
+            PASSWORD PANEL (<a href="/pw">full screen</a>) (<i id="refresh-pw">refresh data</i>)
           </div>
           <iframe src="/pw" border="none"></iframe>
         </div>
@@ -31,7 +31,7 @@
 
       <div class="col-1">
         <div class="title-bar">
-          SITE ANALYTICS (<a href="/analytics">full screen</a>)
+          SITE ANALYTICS (<a href="/analytics">full screen</a>) (<i id="refresh-a">refresh data</i>)
         </div>
         <iframe src="/analytics" border="none"></iframe>
       </div>
@@ -41,6 +41,8 @@
     <script src="/js/main.js"></script>
     <script>
       window.adminLogout('#logout')
+      $('#refresh-pw').on('click', () => { $('iframe[src="/pw"]').src = '/pw' })
+      $('#refresh-a').on('click', () => { $('iframe[src="/analytics"]').src = '/analytics' })
     </script>
   </body>
 </html>

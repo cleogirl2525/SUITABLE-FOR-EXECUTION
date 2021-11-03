@@ -38,3 +38,10 @@ iframe {
 a {
   color: #E6DB6F;
 }
+
+#refresh-pw, #refresh-a {
+  font-style: normal;
+  color: #82E22E;
+  text-decoration: underline;
+  cursor: pointer;
+}
