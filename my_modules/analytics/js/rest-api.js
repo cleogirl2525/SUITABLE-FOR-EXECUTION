@@ -108,6 +108,14 @@ router.get('/api/analytics', async (req, res) => {
   return res.json({ data, opts })
 })
 
+router.get('/api/analytics-bots', async (req, res) => {
+  const o = await checkForToken(req, res)
+  if (o.error) res.json(o)
+  const susPath = process.env.ANALYTICS_BOTS_PATH + '/suspected.json'
+  const sus = JSON.parse(fs.readFileSync(susPath, 'utf8'))
+  return res.json(sus)
+})
+
 router.post('/api/analytics-flag-bot', async (req, res) => {
   const o = await checkForToken(req, res)
   if (o.error) res.json(o)
