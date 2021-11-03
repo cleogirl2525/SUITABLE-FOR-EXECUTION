@@ -84,7 +84,6 @@ function filterDataObj (data, opts) {
       const flagged = sus.flagged.includes(ip)
       const baited = sus['took-the-bait'].includes(ip)
       const ipTrap = sus['hit-the-ip'].includes(ip)
-      console.log(crawler, flagged, baited, ipTrap);
       if (opts.botFilter === 'off') {
         f = true
       } else if (opts.botFilter === 'crawler') {
