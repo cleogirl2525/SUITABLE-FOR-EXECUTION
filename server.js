@@ -49,12 +49,12 @@ if (dev) { // development
     ca: fs.readFileSync('/etc/letsencrypt/live/suitableforexecution.live/chain.pem', 'utf8')
   }
 
-  const httpServer = http.createServer(app)
+  // const httpServer = http.createServer(app)
   const httpsServer = https.createServer(credentials, app)
 
-  httpServer.listen(80, () => console.log('HTTP listening on port 80'))
+  // httpServer.listen(80, () => console.log('HTTP listening on port 80'))
   httpsServer.listen(443, () => console.log('HTTPS listening on port 443'))
 
-  io.attach(httpServer)
+  // io.attach(httpServer)
   io.attach(httpsServer)
 }
