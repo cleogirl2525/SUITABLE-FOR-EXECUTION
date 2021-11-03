@@ -78,19 +78,23 @@ function filterDataObj (data, opts) {
     if (f && opts.ISP) { f = opts.ISP === o.geo.isp }
     if (f && opts.ORG) { f = opts.ORG === o.geo.org }
     if (f && opts.botFilter) {
-      const susPath = path.join(__dirname, '../bots/suspected.json')
+      const susPath = process.env.ANALYTICS_BOTS_PATH + '/suspected.json'
       const sus = JSON.parse(fs.readFileSync(susPath, 'utf8'))
       const crawler = o.device.type === 'bot'
+      const flagged = sus.flagged.includes(ip)
       const baited = sus['took-the-bait'].includes(ip)
       const ipTrap = sus['hit-the-ip'].includes(ip)
+      console.log(crawler, flagged, baited, ipTrap);
       if (opts.botFilter === 'off') {
         f = true
       } else if (opts.botFilter === 'crawler') {
         f = !crawler
+      } else if (opts.botFilter === 'flagged') {
+        f = !crawler && !flagged
       } else if (opts.botFilter === 'took-bait') {
-        f = !crawler && !baited
+        f = !crawler && !flagged && !baited
       } else if (opts.botFilter === 'hit-ip') {
-        f = !crawler && !baited && !ipTrap
+        f = !crawler && !flagged && !baited && !ipTrap
       }
     }
     return f
@@ -104,6 +108,19 @@ router.get('/api/analytics', async (req, res) => {
   const logs = createDataObj(opts)
   const data = filterDataObj(logs, opts)
   return res.json({ data, opts })
+})
+
+router.post('/api/analytics-flag-bot', async (req, res) => {
+  const o = await checkForToken(req, res)
+  if (o.error) res.json(o)
+  if (!req.body.ip) res.json({ error: 'missing IP addresses' })
+  const susPath = process.env.ANALYTICS_BOTS_PATH + '/suspected.json'
+  const sus = JSON.parse(fs.readFileSync(susPath, 'utf8'))
+  sus.flagged.push(req.body.ip)
+  fs.writeFile(susPath, JSON.stringify(sus), (err) => {
+    if (err) res.json({ error: err })
+    else res.json({ message: `${req.body.ip} has been flagged` })
+  })
 })
 
 module.exports = router

@@ -5,7 +5,7 @@ const path = process.env.ANALYTICS_BOTS_PATH + '/suspected.json'
 
 fs.stat(path, (err, stat) => {
   if (err && err.code === 'ENOENT') {
-    const init = '{"took-the-bait":[],"hit-the-ip":[]}'
+    const init = '{"took-the-bait":[],"hit-the-ip":[],"flagged":[]}'
     fs.writeFileSync(path, init)
   }
 })

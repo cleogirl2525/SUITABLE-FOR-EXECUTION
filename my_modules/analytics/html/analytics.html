@@ -111,6 +111,11 @@
         text-decoration: underline;
       }
 
+      .flag-bot {
+        float: right;
+        cursor: pointer;
+      }
+
     </style>
   </head>
   <body>
@@ -136,11 +141,12 @@
           display in local time: <input type="checkbox" id="local-time">
         </span>
         <span>
-          filter (potential) bots:
+          suspected bot filter level:
           <select id="bot-filter">
-            <option value="hit-ip">hit-ip (agressive)</option>
-            <option value="took-bait">took-bait (medium)</option>
-            <option value="crawler">crawler (light)</option>
+            <option value="hit-ip">hit-ip (heavier)</option>
+            <option value="took-bait">took-bait (heavy)</option>
+            <option value="flagged">flagged (medium)</option>
+            <option value="crawler">crawlers (light)</option>
             <option value="off">off (no filter)</option>
           </select>
         </span>
@@ -266,9 +272,28 @@
         }
 
         const displayPosted = (p) => {
+          if (!p || Object.keys(p).length === 0) return ''
           let s = '{ '
           for (const key in p) { s += `${key}: ${p[key]}, ` }
           return s.substring(0, s.length - 2) + ' }'
+        }
+
+        const flagIPasBot = (ip) => {
+          const opts = {
+            method: 'post',
+            headers: {
+              Accept: 'application/json, text/plain, */*',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ip })
+          }
+          window.fetch('/api/analytics-flag-bot', opts)
+            .then(res => res.json())
+            .then(data => {
+              if (data.error) console.log(data.error)
+              else fetchData()
+            })
+            .catch(err => console.error(err))
         }
 
         const gm = (a, b) => `http://maps.google.de/maps?q=loc:${a},${b}`
@@ -324,6 +349,7 @@
             <div>
               visited: <b class="h">${e.url.host}</b> <b class="hh">${e.url.path}</b>
               ${e.posted ? displayPosted(e.posted) : ''}
+              <button class="flag-bot">flag as bot</button>
             </div>
             <div>
               ${e.geo.mobile ? 'request came from a cell connection' : 'request came from a standard connection'}
@@ -341,6 +367,10 @@
             <div>AS: <b class="a">${e.geo.as}</b> | ISP: <b class="p">${e.geo.isp}</b> | ORG: <b class="o">${e.geo.org}</b></div>
           `
           $('#analytics').appendChild(moreInfo)
+
+          moreInfo.querySelector('.flag-bot').addEventListener('click', () => {
+            flagIPasBot(e.ip.split('ffff:')[1])
+          })
 
           moreInfo.querySelectorAll('b').forEach(ele => {
             ele.addEventListener('click', (e) => {
