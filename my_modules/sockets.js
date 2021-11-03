@@ -42,9 +42,21 @@ function addToChatLogs (data) {
   })
 }
 
+function emitUpdatedList (socket, io) {
+  const list = []
+  const socs = io.sockets.clients().connected
+  for (const id in socs) {
+    const ip = socs[id].client.conn.remoteAddress.split('ffff:')[1]
+    const ref = socs[id].handshake.headers.referer
+    list.push({ id, ip, ref })
+  }
+  io.emit('_udpated_list_', list)
+}
+
 function someoneLoggedOff (socket, io) {
   // console.log(`${socket.id} is gone!`)
   delete id2clr[socket.id]
+  emitUpdatedList(socket, io)
 }
 
 async function someoneLoggedOn (socket, io) {
@@ -64,6 +76,8 @@ async function someoneLoggedOn (socket, io) {
     admin: adminClr,
     chats: getChatLogs()
   })
+
+  emitUpdatedList(socket, io)
   // console.log(`${socket.id} connected!`)
 }
 

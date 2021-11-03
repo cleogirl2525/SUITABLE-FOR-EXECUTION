@@ -32,14 +32,36 @@
       <div class="col-1">
         <div class="title-bar">
           SITE ANALYTICS (<a href="/analytics">full screen</a>) (<i id="refresh-a">refresh data</i>)
+          LIVE CONNECTIONS: <span id="live">0</span>
         </div>
         <iframe src="/analytics" border="none"></iframe>
       </div>
 
     </section>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script src="/js/main.js"></script>
     <script>
+      const socket = io()
+
+      socket.on('_udpated_list_', (list) => {
+        const cons = {}
+        const ips = []
+        list.forEach(o => {
+          // update list of currently connected IPs
+          if (!ips.includes(o.ip)) ips.push(o.ip)
+          // update cons dict
+          const path = o.ref.split(location.host)[1]
+          if (!cons[path]) cons[path] = []
+          if (!cons[path].includes(o.ip)) cons[path].push(o.ip)
+        })
+        let str = `${ips.length}`
+        for (const path in cons) {
+          str += ` <b>${path}</b> >> ${cons[path].length}`
+        }
+        $('#live').innerHTML = str
+      })
+
       window.adminLogout('#logout')
       $('#refresh-pw').on('click', () => { $('iframe[src="/pw"]').src = '/pw' })
       $('#refresh-a').on('click', () => { $('iframe[src="/analytics"]').src = '/analytics' })
