@@ -50,7 +50,7 @@ function createDataObj (opts) {
     })
   }
   // combine into one array
-  files.forEach(file => {
+  files.filter(f => f !== '.gitkeep').forEach(file => {
     const s = fs.readFileSync(`${dataPath}/${file}`, 'utf8')
     const arr = JSON.parse(s)
     data = [...data, ...arr]
