@@ -22,13 +22,9 @@ function dateStr (date) {
 
 function getFilePath () {
   const date = dateStr(new Date())
-  const filepath = path.join(__dirname, `../data/chats/${date}.json`)
-  try {
-    fs.statSync(filepath)
-  } catch (err) {
-    fs.writeFileSync(filepath, '[]')
-  }
-  return filepath
+  const fp = path.join(__dirname, `../data/chats/${date}.json`)
+  try { fs.statSync(fp) } catch (err) { fs.writeFileSync(fp, '[]') }
+  return fp
 }
 
 function getChatLogs () {

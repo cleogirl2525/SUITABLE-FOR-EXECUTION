@@ -19,16 +19,16 @@ ANALYTICS.setup(app, {
     // exclude: ['*.css', '*.js'],
     post: ['password']
   },
-  auth: { // required for api && gui
+  auth: {
     login: '/login',
-    cookie: 'AdminToken', // name of cookie w/jwt token
-    secret: process.env.JWT_SECRET, // jwt secret
-    api: true, // serve the REST API at /api/analytics
-    gui: true // serve the analytics dashboard at /analytics
+    cookie: 'AdminToken',
+    secret: process.env.JWT_SECRET,
+    api: true,
+    gui: true
   },
-  bots: { // setup bait trap to catch bots
-    path: path.join(__dirname, 'data/bots'), // to store bots
-    ip: '134.209.123.184' // additional vector to catch bots
+  bots: {
+    path: path.join(__dirname, 'data/bots'),
+    ip: '134.209.123.184'
   }
 })
 

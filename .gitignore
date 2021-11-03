@@ -1,5 +1,8 @@
 .env
 node_modules
-data/chats/*.json
-data/analytics/*.json
 package-lock.json
+
+data/analytics/*.json
+data/bots/*.json
+data/chats/*.json
+data/pw/*.json

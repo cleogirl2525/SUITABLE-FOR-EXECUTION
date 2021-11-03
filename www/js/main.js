@@ -6,7 +6,7 @@ const $ = (sel) => {
 }
 
 window.postLogin = (clickSel, passSel, callback) => {
-  $(clickSel).on('click', () => {
+  const postIt = () => {
     const opts = {
       method: 'post',
       headers: {
@@ -22,6 +22,11 @@ window.postLogin = (clickSel, passSel, callback) => {
       .then(res => res.json())
       .then(data => callback(data))
       .catch(err => console.error(err))
+  }
+
+  $(clickSel).on('click', () => postIt())
+  $(passSel).on('keypress', (e) => {
+    if (e.keyCode === 13) postIt()
   })
 }
 

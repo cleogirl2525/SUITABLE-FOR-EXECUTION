@@ -8,6 +8,15 @@
   <body>
     <section class="wrap">
       <h1>welcome to the show!!!</h1>
+      <button>open chat</button>
     </section>
+    <script>
+      function pop () {
+        const opt = `width=700,height=350,scrollbars=no`
+        const win = window.open('/chat', 'Chat', opt)
+        window.addEventListener('beforeunload', () => win.close())
+      }
+      document.querySelector('button').addEventListener('click', pop)
+    </script>
   </body>
 </html>

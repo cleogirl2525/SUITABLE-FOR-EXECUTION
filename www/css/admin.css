@@ -21,12 +21,18 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-column-gap: 10px;
+  height: calc(50vh - 69px);
+}
+
+.col-1 {
+  height: calc(50vh - 69px);
 }
 
 iframe {
   display: block;
   width: 100%;
   border: 1px solid white;
+  height: calc(100% - 77px);
 }
 
 a {
