@@ -86,7 +86,9 @@ function createPwStat (name, arr) {
       <span class="pw">
         <span class="copied">copied password!</span> ${name}
       </span>
-      <span>${arr.length} hit${arr.length === 1 ? '' : 's'}</span>
+      <span class="hits">
+        ${arr.length} hit${arr.length === 1 ? '' : 's'}
+      </span>
       <span>
         <button class="delete" data-pw="${name}">DELETE PW</button>
       </span>
@@ -109,12 +111,15 @@ function createPwStat (name, arr) {
   })
 
   row.querySelector('.pw').addEventListener('click', e => {
+    copied(row, name)
+  })
+
+  row.querySelector('.hits').addEventListener('click', e => {
     const d = row.querySelector('.details').style.display === 'block'
     if (d) {
       row.querySelector('.details').style.display = 'none'
     } else {
       row.querySelector('.details').style.display = 'block'
-      copied(row, name)
     }
   })
 
