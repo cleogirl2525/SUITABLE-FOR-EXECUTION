@@ -2,23 +2,19 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>The Show</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <title>&hearts; # S43 # &hearts; # LIVE # &hearts;</title>
+    <link rel="stylesheet" href="css/styles.css">
   </head>
-  <body>
-    <section class="wrap">
-      <h1>welcome to the show!!!</h1>
-      <button>open chat</button>
-    </section>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-      const socket = io()
-      function pop () {
-        const opt = `width=700,height=350,scrollbars=no`
-        const win = window.open('/chat', 'Chat', opt)
-        window.addEventListener('beforeunload', () => win.close())
-      }
-      document.querySelector('button').addEventListener('click', pop)
-    </script>
+  <body><br><br><br><br><br><br>
+      <center>
+      <button id="start">BEGIN</button><br>
+      <audio id="track" src="" controls></audio><br>
+      <div class="dropshad"><img src="assets/s4e_rr.png" width="30%"></div></center><br><br>
+ 
+
+    <script src="js/Maths.js"></script>
+    <script src="js/PopUp.js"></script>
+    <script src="js/Timeline.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>
