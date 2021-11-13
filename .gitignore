@@ -6,3 +6,6 @@ data/analytics/*.json
 data/bots/*.json
 data/chats/*.json
 data/pw/*.json
+
+protected/prepared-pop-ups/*
+!protected/prepared-pop-ups/.gitkeep
