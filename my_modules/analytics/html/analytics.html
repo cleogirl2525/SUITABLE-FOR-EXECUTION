@@ -76,12 +76,14 @@
       }
 
       .analytics-row {
+        cursor: pointer;
         display: grid;
         grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 2.2fr;
       }
 
       .analytics-row:hover {
-        background: #66D9CFAA;
+        color: black;
+        background: #66D9CF;
       }
 
       .analytics-row > * {
@@ -402,17 +404,18 @@
             })
           })
 
-          div.querySelector('b').addEventListener('click', (e) => {
+          const toggleDetails = () => {
             if (div.dataset.open === 'true') {
               moreInfo.style.display = 'none'
               div.dataset.open = 'false'
-              e.target.textContent = '▶'
+              div.querySelector('b').textContent = '▶'
             } else {
               moreInfo.style.display = 'block'
-              e.target.textContent = '▼'
+              div.querySelector('b').textContent = '▼'
               div.dataset.open = 'true'
             }
-          })
+          }
+          div.addEventListener('click', toggleDetails)
         })
         $('#loading').style.display = 'none'
       }
