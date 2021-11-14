@@ -191,4 +191,24 @@ router.get('/chat', async (req, res) => {
   handleProtectedRoute(o, res, '/', '../protected/chat.html')
 })
 
+// prepared-pop-ups files
+const prepPopRoot = '../protected/prepared-pop-ups'
+const prepPopFiles = fs.readdirSync(path.join(__dirname, prepPopRoot))
+
+function servePrepPopFile (path) {
+  router.get(`/${path}`, async (req, res) => {
+    const o = await checkForToken('any', req, res)
+    handleProtectedRoute(o, res, '/', `${prepPopRoot}/${path}`)
+  })
+}
+
+prepPopFiles.forEach(str => {
+  if (str.includes('.')) {
+    servePrepPopFile(str)
+  } else {
+    const sub = fs.readdirSync(path.join(__dirname, `${prepPopRoot}/${str}`))
+    sub.forEach(s => servePrepPopFile(`${str}/${s}`))
+  }
+})
+
 module.exports = router
