@@ -19,7 +19,15 @@ function genOpts (url) {
     ips: ips,
     host: url.host || null,
     path: url.path || null,
-    botFilter: url['bot-filter'] || null,
+    // bot filters
+    botFilter: {
+      crawler: url['x-bot-crawler'] === 'true',
+      tookBait: url['x-bot-took-bait'] === 'true',
+      hitIp: url['x-bot-hit-ip'] === 'true',
+      flagged: url['x-bot-flagged'] === 'true',
+      dataCenter: url['x-bot-data-center'] === 'true',
+      proxy: url['x-bot-proxy'] === 'true'
+    },
     // select filters
     device: url.device || null,
     client: url.client || null,
@@ -58,6 +66,9 @@ function createDataObj (opts) {
 }
 
 function filterDataObj (data, opts) {
+  const susPath = process.env.ANALYTICS_BOTS_PATH + '/suspected.json'
+  const sus = JSON.parse(fs.readFileSync(susPath, 'utf8'))
+
   return data.filter(o => {
     let f = true
     const ip = o.ip.includes('ffff:') ? o.ip.split('ffff:')[1] : o.ip
@@ -77,23 +88,18 @@ function filterDataObj (data, opts) {
     if (f && opts.ISP) { f = opts.ISP === o.geo.isp }
     if (f && opts.ORG) { f = opts.ORG === o.geo.org }
     if (f && opts.botFilter) {
-      const susPath = process.env.ANALYTICS_BOTS_PATH + '/suspected.json'
-      const sus = JSON.parse(fs.readFileSync(susPath, 'utf8'))
       const crawler = o.device.type === 'bot'
+      const tookBait = sus['took-the-bait'].includes(ip)
+      const hitIp = sus['hit-the-ip'].includes(ip)
       const flagged = sus.flagged.includes(ip)
-      const baited = sus['took-the-bait'].includes(ip)
-      const ipTrap = sus['hit-the-ip'].includes(ip)
-      if (opts.botFilter === 'off') {
-        f = true
-      } else if (opts.botFilter === 'crawler') {
-        f = !crawler
-      } else if (opts.botFilter === 'flagged') {
-        f = !crawler && !flagged
-      } else if (opts.botFilter === 'took-bait') {
-        f = !crawler && !flagged && !baited
-      } else if (opts.botFilter === 'hit-ip') {
-        f = !crawler && !flagged && !baited && !ipTrap
-      }
+      const dataCenter = sus['data-center'].includes(ip)
+      const proxy = sus.proxy.includes(ip)
+      if (opts.botFilter.crawler && crawler) f = false
+      if (opts.botFilter.tookBait && tookBait) f = false
+      if (opts.botFilter.hitIp && hitIp) f = false
+      if (opts.botFilter.flagged && flagged) f = false
+      if (opts.botFilter.dataCenter && dataCenter) f = false
+      if (opts.botFilter.proxy && proxy) f = false
     }
     return f
   })

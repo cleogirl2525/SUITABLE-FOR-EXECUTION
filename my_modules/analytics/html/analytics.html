@@ -37,6 +37,18 @@
         justify-content: space-between;
       }
 
+      .bot-filters {
+        justify-content: flex-start;
+      }
+
+      .bot-filters > span {
+        padding: 0 16px;
+      }
+
+      .bot-filters > span:nth-child(1) {
+        padding: 0;
+      }
+
       header select {
         max-width: 100px;
       }
@@ -146,20 +158,20 @@
         <span>
           display in local time: <input type="checkbox" id="local-time">
         </span>
-        <span>
-          <a href="/api/analytics-bots" target="_blank">suspected bots</a> filter level:
-          <select id="bot-filter">
-            <option value="hit-ip">hit-ip (heavier)</option>
-            <option value="took-bait">took-bait (heavy)</option>
-            <option value="flagged">flagged (medium)</option>
-            <option value="crawler">crawlers (light)</option>
-            <option value="off">off (no filter)</option>
-          </select>
-        </span>
+      </div>
+      <br>
+      <div class="bot-filters">
+        <span>filtering out <a href="/api/analytics-bots" target="_blank">suspected bots</a>:</span>
+        <span><input type="checkbox" id="bot-crawler" checked="true"> crawler</span>
+        <span><input type="checkbox" id="bot-took-bait" checked="true"> click-bait</span>
+        <span><input type="checkbox" id="bot-hit-ip" checked="true"> hit-ip</span>
+        <span><input type="checkbox" id="bot-flagged" checked="true"> flagged</span>
+        <span><input type="checkbox" id="bot-data-center" checked="true"> data-center</span>
+        <span><input type="checkbox" id="bot-proxy" checked="true"> proxy</span>
       </div>
       <br>
       <div id="select-filters">
-        <span>filters: </span>
+        <span>filtering in: </span>
         <input type="text" id="ips" placeholder="filter IP(s)" style="width: 100px">
         <select id="device"></select>
         <select id="client"></select>
@@ -221,7 +233,12 @@
 
         $('#time-range-from').on('change', fetchData)
         $('#ips').on('change', fetchData)
-        $('#bot-filter').on('change', fetchData)
+        $('#bot-crawler').on('change', fetchData)
+        $('#bot-took-bait').on('change', fetchData)
+        $('#bot-hit-ip').on('change', fetchData)
+        $('#bot-flagged').on('change', fetchData)
+        $('#bot-data-center').on('change', fetchData)
+        $('#bot-proxy').on('change', fetchData)
         $('#local-time').on('change', () => {
           $('#loading').style.display = 'flex'
           setTimeout(render, 100)
@@ -252,7 +269,12 @@
           query += `&host=${h}&path=${hh}`
         }
 
-        query += `&bot-filter=${$('#bot-filter').value}`
+        query += `&x-bot-crawler=${$('#bot-crawler').checked}`
+        query += `&x-bot-took-bait=${$('#bot-took-bait').checked}`
+        query += `&x-bot-hit-ip=${$('#bot-hit-ip').checked}`
+        query += `&x-bot-flagged=${$('#bot-flagged').checked}`
+        query += `&x-bot-data-center=${$('#bot-data-center').checked}`
+        query += `&x-bot-proxy=${$('#bot-proxy').checked}`
 
         window.fetch(query)
           .then(res => res.json())

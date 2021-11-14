@@ -119,7 +119,10 @@ module.exports = (req, res, next) => {
   exec(`curl http://ip-api.com/json/${data.ip}${f}`, (err, stdout) => {
     if (err) data.geo = 'curl failed'
     else data.geo = JSON.parse(stdout)
-    logData(data)
+
+    if (data.geo.proxy) addIP2BotList(ip, 'data-center')
+    else if (data.geo.hosting) addIP2BotList(ip, 'proxy')
+    else logData(data)
   })
 
   next()
