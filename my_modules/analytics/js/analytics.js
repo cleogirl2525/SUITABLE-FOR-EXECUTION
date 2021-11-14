@@ -122,7 +122,8 @@ module.exports = (req, res, next) => {
 
     if (data.geo.proxy) addIP2BotList(ip, 'data-center')
     else if (data.geo.hosting) addIP2BotList(ip, 'proxy')
-    else logData(data)
+
+    logData(data)
   })
 
   next()
