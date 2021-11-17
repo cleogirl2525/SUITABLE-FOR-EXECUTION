@@ -1,3 +1,14 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: black;
+  color: #fff;
+  font-family: 'Inconsolata', mono;
+}
+
 .top {
   padding: 20px;
   border-bottom: 1px solid white;
