@@ -16,11 +16,45 @@
 }
 
 body {
-  margin: 0;
-  background-color: black;
+  background-color: #000000;
+  background-image: url("red-cast-cover.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  font-family: monospace;
+  text-align: justify;
+  color: #FFFFFF;
+  margin: 2vw;
+  padding: 25px 25px 25px 25px;
+  cursor: crosshair;
+}
+
+.broken {
+  background-color: rgba(0, 0, 0, .8);
   color: white;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  font-weight: 300;
+
+  font-family: monospace;
+  font-size: 13.5px;
+  letter-spacing: 2px;
+  text-align: justify;
+  width: auto;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5%;
+  padding: 15px 15px 15px 15px;
+  overflow: auto;
+}
+
+a{
+  color: rgb(255,255,255);
+  text-decoration: underline;
+  cursor: crosshair;
+}
+a:hover{
+  color: rgb(255,0,0);
+  cursor: crosshair;
 }
 
 h1 {
@@ -36,10 +70,10 @@ input {
 
 button {
   border: 1px solid #fff;
-  background-color: #fff;
-  color: #000;
+  background-color: rgba(0, 0, 0, .8);
+  color: red;
   padding: 5px 10px;
-  cursor: pointer;
+  cursor: crosshair;
 }
 
 .wrap {
@@ -55,4 +89,25 @@ button {
 
 .error-message {
   color: red;
+}
+
+/* START SCROLLBAR STYLE, #1 width */
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgb(255, 0, 0);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: black;
+  border: 1px solid black;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: red;
 }
