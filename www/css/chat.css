@@ -53,8 +53,17 @@ body {
 
 #chat-box button {
   width: 66px;
+  color: #fff;
+  border: 1px solid #fff;
+  background-color: black;
+  padding: 5px 10px;
+  cursor: crosshair;
 }
 
 #chat-box input {
   width: calc(100% - 75px);
+  border: 1px solid #fff;
+  background-color: black;
+  color: white;
+  padding: 5px 10px;
 }

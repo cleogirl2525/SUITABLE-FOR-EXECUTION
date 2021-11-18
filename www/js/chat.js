@@ -70,6 +70,29 @@ function sendMessage () {
   scrollToBottom()
 }
 
+function createCounter (marquee, data) {
+  const div = document.createElement('div')
+  div.style.background = data.color
+  div.style.color = isLight(data.color) ? 'black' : 'white'
+  div.style.padding = '4px'
+  div.style.textAlign = 'center'
+  marquee.parentNode.replaceChild(div, marquee)
+  const targ = new Date()
+  targ.setMinutes(targ.getMinutes() + 5) // 5 mins
+  const targSecs = targ.getMinutes() * 60 + targ.getSeconds()
+  setInterval(function () {
+    const now = new Date()
+    const nowSecs = now.getMinutes() * 60 + now.getSeconds()
+    const timeleft = targSecs - nowSecs
+    let s = timeleft % 60
+    s = (String(s).length === 2) ? s : '0' + s
+    let m = parseInt(timeleft / 60)
+    m = (String(m).length === 2) ? m : '0' + m
+    if (timeleft <= 0) window.close()
+    else div.textContent = `countdown: ${m}:${s}`
+  }, 500)
+}
+
 sendBtn.addEventListener('click', () => sendMessage())
 
 sendMsg.addEventListener('keypress', (e) => {
@@ -80,6 +103,7 @@ socket.on('init-chat', (data) => {
   const m = document.querySelector('marquee')
   m.style.background = data.color
   m.style.color = isLight(data.color) ? 'black' : 'white'
+  if (window.location.hash === '#counter') createCounter(m, data)
   document.querySelector('#chat-box').style.background = data.color
   mycolor.bg = data.color
   mycolor.fg = isLight(data.color) ? 'black' : 'white'
