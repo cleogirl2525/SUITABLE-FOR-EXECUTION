@@ -186,6 +186,12 @@ router.get('/show', async (req, res) => {
   handleProtectedRoute(o, res, '/', '../protected/prepared-pop-ups/index.html')
 })
 
+router.get('/showing', async (req, res) => {
+  const o = await checkForToken('any', req, res)
+  add2pwLogs(req, 'show')
+  handleProtectedRoute(o, res, '/', '../protected/showing.html')
+})
+
 router.get('/chat', async (req, res) => {
   const o = await checkForToken('any', req, res)
   handleProtectedRoute(o, res, '/', '../protected/chat.html')
