@@ -88,8 +88,12 @@ function createCounter (marquee, data) {
     s = (String(s).length === 2) ? s : '0' + s
     let m = parseInt(timeleft / 60)
     m = (String(m).length === 2) ? m : '0' + m
-    if (timeleft <= 0) window.close()
-    else div.textContent = `countdown: ${m}:${s}`
+    if (timeleft <= 0) {
+      window.close()
+      window.opener.location.reload()
+    } else {
+      div.textContent = `countdown: ${m}:${s}`
+    }
   }, 500)
 }
 
