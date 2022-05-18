@@ -16,7 +16,7 @@ module.exports = (req, res, next) => {
   const host = req.headers.host
   const url = req.originalUrl
   if (hostDict[host]) {
-    console.log(host, url)
+    // console.log(host, url)
     const newURL = urlParse(host, url)
     res.sendFile(path.join(__dirname, newURL))
   } else next()
