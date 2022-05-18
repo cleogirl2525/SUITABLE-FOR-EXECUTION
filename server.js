@@ -10,6 +10,7 @@ const SocketsServer = require('socket.io')
 const ANALYTICS = require('./my_modules/analytics')
 const SOCKETS = require('./my_modules/sockets.js')
 const ROUTES = require('./my_modules/routes.js')
+const PROXY = require('./my_modules/proxy.js')
 const dev = process.env.DEV
 
 ANALYTICS.setup(app, {
@@ -32,8 +33,9 @@ ANALYTICS.setup(app, {
   }
 })
 
-app.use(express.static(`${__dirname}/www`))
+app.use(PROXY)
 app.use(ROUTES)
+app.use(express.static(`${__dirname}/www`))
 
 const io = new SocketsServer()
 io.on('connection', (socket) => SOCKETS(socket, io))
